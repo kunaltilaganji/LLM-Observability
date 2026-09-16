@@ -1,0 +1,111 @@
+# Recording rules for the SRE percentiles.
+#
+# Latency is reported as P50/P90/P95 rather than a mean because the mean of a
+# long-tailed latency distribution describes no actual request: on this service
+# a cold start or a queued request sits several seconds above the body of the
+# distribution, and averaging pulls the reported number to a value most users
+# never experience while hiding the tail entirely.
+#
+# `histogram_quantile` interpolates within a bucket, so these are only as
+# precise as the bucket boundaries in llmobs/metrics.py -- which is why those
+# were chosen from Project 2's measured distribution rather than left at the
+# library defaults.
+
+groups:
+  - name: llmobs_latency
+    interval: 5s
+    rules:
+      - record: llmobs:request_latency_seconds:p50
+        expr: histogram_quantile(0.50, sum by (le, model, schema, mode) (rate(llmobs_request_duration_seconds_bucket[1m])))
+      - record: llmobs:request_latency_seconds:p90
+        expr: histogram_quantile(0.90, sum by (le, model, schema, mode) (rate(llmobs_request_duration_seconds_bucket[1m])))
+      - record: llmobs:request_latency_seconds:p95
+        expr: histogram_quantile(0.95, sum by (le, model, schema, mode) (rate(llmobs_request_duration_seconds_bucket[1m])))
+
+      - record: llmobs:ttft_seconds:p95
+        expr: histogram_quantile(0.95, sum by (le, model, schema, mode) (rate(llmobs_ttft_seconds_bucket[1m])))
+
+      - record: llmobs:queue_wait_seconds:p95
+        expr: histogram_quantile(0.95, sum by (le, model, schema, mode) (rate(llmobs_queue_wait_seconds_bucket[1m])))
+
+      # Server-reported decode time. Tracked alongside the wall-clock P95 so a
+      # divergence between the two is visible: when queueing is the cause of a
+      # latency regression, this line stays flat while the wall-clock line
+      # climbs -- and a dashboard built only on the server's own numbers would
+      # show nothing wrong at all.
+      - record: llmobs:server_eval_seconds:p95
+        expr: histogram_quantile(0.95, sum by (le, model, schema, mode) (rate(llmobs_server_eval_duration_seconds_bucket[1m])))
+
+  - name: llmobs_quality
+    interval: 5s
+    rules:
+      # Schema validity: the fraction of requests that produced a record which
+      # validated. This is what `format: <schema>` is supposed to guarantee.
+      - record: llmobs:schema_validity:ratio5m
+        expr: >
+          sum by (model, schema, mode) (rate(llmobs_requests_total{outcome="ok"}[5m]))
+          /
+          clamp_min(sum by (model, schema, mode) (rate(llmobs_requests_total[5m])), 1e-9)
+
+      - record: llmobs:fallback_rate:ratio5m
+        expr: >
+          sum by (model, schema, mode) (rate(llmobs_fallbacks_total[5m]))
+          /
+          clamp_min(sum by (model, schema, mode) (rate(llmobs_requests_total[5m])), 1e-9)
+
+      - record: llmobs:retry_rate:ratio5m
+        expr: >
+          sum by (model, schema, mode) (rate(llmobs_retries_total[5m]))
+          /
+          clamp_min(sum by (model, schema, mode) (rate(llmobs_requests_total[5m])), 1e-9)
+
+      # How often "constrained" output still needed client-side repair. Project
+      # 2 found this is not zero even in schema mode.
+      - record: llmobs:repair_rate:ratio5m
+        expr: >
+          sum by (model, schema, mode) (rate(llmobs_extraction_repairs_total[5m]))
+          /
+          clamp_min(sum by (model, schema, mode) (rate(llmobs_attempts_total[5m])), 1e-9)
+
+      - record: llmobs:graded_accuracy:ratio5m
+        expr: >
+          sum by (model, schema, mode) (rate(llmobs_graded_fields_total{result="correct"}[5m]))
+          /
+          clamp_min(sum by (model, schema, mode) (rate(llmobs_graded_fields_total[5m])), 1e-9)
+
+      # Both error directions, separately. The aggregate accuracy above cannot
+      # distinguish a model that invents values from one that drops them, and
+      # those failures need opposite fixes.
+      - record: llmobs:omission_rate:ratio5m
+        expr: >
+          sum by (model, schema, mode) (rate(llmobs_graded_errors_total{direction="omission"}[5m]))
+          /
+          clamp_min(sum by (model, schema, mode) (rate(llmobs_graded_fields_total[5m])), 1e-9)
+
+      - record: llmobs:commission_rate:ratio5m
+        expr: >
+          sum by (model, schema, mode) (rate(llmobs_graded_errors_total{direction="commission"}[5m]))
+          /
+          clamp_min(sum by (model, schema, mode) (rate(llmobs_graded_fields_total[5m])), 1e-9)
+
+  - name: llmobs_cost
+    interval: 5s
+    rules:
+      - record: llmobs:cost_usd_per_hour:gpu
+        expr: sum(rate(llmobs_cost_usd_total{basis="gpu"}[5m])) * 3600
+
+      - record: llmobs:cost_usd_per_hour:hosted
+        expr: sum(rate(llmobs_cost_usd_total{basis=~"hosted:.*"}[5m])) * 3600
+
+      # Cost per 1000 requests, on both accounting bases. This is the number
+      # that decides whether self-hosting is worth it, and it only means
+      # something with both sides metered.
+      - record: llmobs:cost_usd_per_1k_requests:gpu
+        expr: >
+          1000 * sum(rate(llmobs_cost_usd_total{basis="gpu"}[5m]))
+          / clamp_min(sum(rate(llmobs_requests_total[5m])), 1e-9)
+
+      - record: llmobs:cost_usd_per_1k_requests:hosted
+        expr: >
+          1000 * sum(rate(llmobs_cost_usd_total{basis=~"hosted:.*"}[5m]))
+          / clamp_min(sum(rate(llmobs_requests_total[5m])), 1e-9)

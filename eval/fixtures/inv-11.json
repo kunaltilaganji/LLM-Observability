@@ -1,0 +1,21 @@
+{
+  "task_id": "inv-11",
+  "schema": "invoice",
+  "tags": [
+    "european_decimal",
+    "currency_inference"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Amazonia Verde Ltda",
+    "invoice_number": "BR-2026-4417",
+    "total_amount": 23450.75,
+    "currency": "BRL",
+    "line_item_count": 15
+  },
+  "latency_s": 1.3877592207863927,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

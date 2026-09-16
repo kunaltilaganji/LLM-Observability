@@ -1,0 +1,22 @@
+{
+  "task_id": "ai-05",
+  "schema": "action_item",
+  "tags": [
+    "null_trap",
+    "no_owner",
+    "low_priority"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "update the onboarding docs screenshot",
+    "assignee": null,
+    "due_date": null,
+    "priority": "low",
+    "blocked": false
+  },
+  "latency_s": 0.9764603152871132,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

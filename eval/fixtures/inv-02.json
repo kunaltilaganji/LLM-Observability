@@ -1,0 +1,21 @@
+{
+  "task_id": "inv-02",
+  "schema": "invoice",
+  "tags": [
+    "european_decimal",
+    "non_english"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Bauer Elektronik GmbH",
+    "invoice_number": "DE-9981",
+    "total_amount": 8245.9,
+    "currency": "EUR",
+    "line_item_count": 7
+  },
+  "latency_s": 1.2747873831540346,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

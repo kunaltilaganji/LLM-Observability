@@ -1,0 +1,22 @@
+{
+  "task_id": "ai-14",
+  "schema": "action_item",
+  "tags": [
+    "relative_date",
+    "date_arithmetic",
+    "blocked"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "ship the hotfix",
+    "assignee": null,
+    "due_date": null,
+    "priority": "urgent",
+    "blocked": false
+  },
+  "latency_s": 0.9862611908465624,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-12",
+  "schema": "action_item",
+  "tags": [
+    "distractor_name",
+    "reassignment"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "review the PR",
+    "assignee": null,
+    "due_date": null,
+    "priority": "urgent",
+    "blocked": false
+  },
+  "latency_s": 0.9979451368562877,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

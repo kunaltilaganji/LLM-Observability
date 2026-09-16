@@ -1,0 +1,20 @@
+{
+  "task_id": "inv-12",
+  "schema": "invoice",
+  "tags": [
+    "balance_distractor"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Nordic Steel AS",
+    "invoice_number": "NS-PRO-208",
+    "total_amount": 58900.0,
+    "currency": "NOK",
+    "line_item_count": 3
+  },
+  "latency_s": 1.3326510372571647,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

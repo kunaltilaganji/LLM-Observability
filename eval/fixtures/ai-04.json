@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-04",
+  "schema": "action_item",
+  "tags": [
+    "blocked",
+    "null_date"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "Start the analytics migration",
+    "assignee": "Sam",
+    "due_date": null,
+    "priority": "urgent",
+    "blocked": true
+  },
+  "latency_s": 1.12333031790331,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

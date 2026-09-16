@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-03",
+  "schema": "action_item",
+  "tags": [
+    "distractor_name",
+    "explicit_date"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "Disable flaky test and open a follow-up ticket",
+    "assignee": "Dana",
+    "due_date": null,
+    "priority": "urgent",
+    "blocked": false
+  },
+  "latency_s": 1.194054921157658,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

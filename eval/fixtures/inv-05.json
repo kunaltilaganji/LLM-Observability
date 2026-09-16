@@ -1,0 +1,20 @@
+{
+  "task_id": "inv-05",
+  "schema": "invoice",
+  "tags": [
+    "subtotal_distractor"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Kyoto Precision KK",
+    "invoice_number": "KP-2026-33",
+    "total_amount": 231000.0,
+    "currency": "JPY",
+    "line_item_count": 5
+  },
+  "latency_s": 1.2991858548484743,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

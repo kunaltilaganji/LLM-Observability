@@ -1,0 +1,22 @@
+{
+  "task_id": "ai-16",
+  "schema": "action_item",
+  "tags": [
+    "null_trap",
+    "urgency",
+    "no_owner"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "Investigate exposed S3 bucket",
+    "assignee": null,
+    "due_date": null,
+    "priority": "urgent",
+    "blocked": false
+  },
+  "latency_s": 1.065266331192106,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

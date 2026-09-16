@@ -1,0 +1,21 @@
+{
+  "task_id": "st-15",
+  "schema": "support_ticket",
+  "tags": [
+    "billing_dispute",
+    "null_trap"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "billing",
+    "severity": "sev2",
+    "sentiment": "frustrated",
+    "requires_escalation": false,
+    "affected_component": null
+  },
+  "latency_s": 1.0354259591549635,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

@@ -1,0 +1,20 @@
+{
+  "task_id": "st-14",
+  "schema": "support_ticket",
+  "tags": [
+    "docs"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "integration",
+    "severity": "sev2",
+    "sentiment": "frustrated",
+    "requires_escalation": false,
+    "affected_component": null
+  },
+  "latency_s": 1.161190812010318,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

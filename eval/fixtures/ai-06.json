@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-06",
+  "schema": "action_item",
+  "tags": [
+    "relative_date",
+    "date_arithmetic"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "submit SOC2 evidence package",
+    "assignee": null,
+    "due_date": "2026-03-16",
+    "priority": "high",
+    "blocked": false
+  },
+  "latency_s": 1.3019369961693883,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

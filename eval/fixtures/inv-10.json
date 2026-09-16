@@ -1,0 +1,20 @@
+{
+  "task_id": "inv-10",
+  "schema": "invoice",
+  "tags": [
+    "apostrophe_separator"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Helvetica Instruments AG",
+    "invoice_number": "HI-2026-0071",
+    "total_amount": 15890.4,
+    "currency": "CHF",
+    "line_item_count": 6
+  },
+  "latency_s": 1.3559602489694953,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

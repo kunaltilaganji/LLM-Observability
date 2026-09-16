@@ -1,0 +1,9 @@
+.run/
+logs/
+ops/vendor/
+results/traces/
+reports/*.json
+!reports/baseline_run.json
+__pycache__/
+*.pyc
+.pytest_cache/

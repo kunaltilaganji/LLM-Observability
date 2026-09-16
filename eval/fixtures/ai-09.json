@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-09",
+  "schema": "action_item",
+  "tags": [
+    "explicit_date",
+    "iso_in_text"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "benchmark the new vector index",
+    "assignee": null,
+    "due_date": null,
+    "priority": "medium",
+    "blocked": false
+  },
+  "latency_s": 1.0721709472127259,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

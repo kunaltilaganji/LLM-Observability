@@ -1,0 +1,20 @@
+{
+  "task_id": "ai-18",
+  "schema": "action_item",
+  "tags": [
+    "distractor_name"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "prototype Redis-backed sessions",
+    "assignee": "Amara",
+    "due_date": null,
+    "priority": "medium",
+    "blocked": false
+  },
+  "latency_s": 1.0882782801054418,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

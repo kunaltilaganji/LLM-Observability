@@ -1,0 +1,20 @@
+{
+  "task_id": "st-11",
+  "schema": "support_ticket",
+  "tags": [
+    "partial_impact"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "authentication",
+    "severity": "sev2",
+    "sentiment": "frustrated",
+    "requires_escalation": true,
+    "affected_component": null
+  },
+  "latency_s": 1.068510081153363,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

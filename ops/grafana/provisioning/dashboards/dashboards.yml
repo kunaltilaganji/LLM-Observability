@@ -1,0 +1,19 @@
+apiVersion: 1
+
+providers:
+  - name: llmobs
+    orgId: 1
+    folder: LLM Observability
+    type: file
+    disableDeletion: false
+    # Dashboards are provisioned from the repo, so the checked-in JSON is the
+    # source of truth rather than whatever someone last dragged around in the
+    # UI. Edits made in Grafana are not persisted back -- export and commit.
+    allowUiUpdates: false
+    updateIntervalSeconds: 10
+    options:
+      # Grafana requires an absolute path here, so it is injected rather than
+      # hardcoded -- scripts/stack.sh exports LLMOBS_DASHBOARD_DIR. Committing
+      # one developer's absolute path would break the repo for everyone else.
+      path: $__env{LLMOBS_DASHBOARD_DIR}
+      foldersFromFilesStructure: false

@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-20",
+  "schema": "action_item",
+  "tags": [
+    "relative_date",
+    "date_arithmetic"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "complete compliance training",
+    "assignee": "Yusuf",
+    "due_date": null,
+    "priority": "urgent",
+    "blocked": false
+  },
+  "latency_s": 1.0337648089043796,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

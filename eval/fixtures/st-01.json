@@ -1,0 +1,21 @@
+{
+  "task_id": "st-01",
+  "schema": "support_ticket",
+  "tags": [
+    "outage",
+    "sev1"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "authentication",
+    "severity": "sev1",
+    "sentiment": "angry",
+    "requires_escalation": true,
+    "affected_component": null
+  },
+  "latency_s": 1.1473358948715031,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

@@ -1,0 +1,20 @@
+{
+  "task_id": "st-18",
+  "schema": "support_ticket",
+  "tags": [
+    "sev1"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "authentication",
+    "severity": "sev1",
+    "sentiment": "neutral",
+    "requires_escalation": true,
+    "affected_component": null
+  },
+  "latency_s": 1.010168984066695,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

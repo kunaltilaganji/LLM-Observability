@@ -1,0 +1,21 @@
+{
+  "task_id": "st-16",
+  "schema": "support_ticket",
+  "tags": [
+    "data_loss",
+    "sev1"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "data_loss",
+    "severity": "sev1",
+    "sentiment": "frustrated",
+    "requires_escalation": true,
+    "affected_component": null
+  },
+  "latency_s": 1.0792122981511056,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

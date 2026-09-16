@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-17",
+  "schema": "action_item",
+  "tags": [
+    "blocked",
+    "explicit_date"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "Bump the Kubernetes node pool",
+    "assignee": "Lars",
+    "due_date": "2026-11-20",
+    "priority": "urgent",
+    "blocked": true
+  },
+  "latency_s": 1.3210969800129533,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

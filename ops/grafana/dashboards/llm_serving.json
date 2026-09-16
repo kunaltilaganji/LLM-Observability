@@ -1,0 +1,516 @@
+{
+  "uid": "llmobs-serving",
+  "title": "LLM Extraction Service",
+  "description": "Golden signals, quality, and cost for the locally-served structured-extraction API. Colours follow a CVD-validated categorical order; no panel uses a second y-axis.",
+  "tags": ["llmobs", "slo"],
+  "timezone": "browser",
+  "editable": true,
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": { "from": "now-30m", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "model",
+        "label": "Model",
+        "type": "query",
+        "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+        "query": "label_values(llmobs_requests_total, model)",
+        "refresh": 2,
+        "includeAll": true,
+        "multi": true,
+        "current": { "text": "All", "value": "$__all" }
+      },
+      {
+        "name": "mode",
+        "label": "Enforcement mode",
+        "type": "query",
+        "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+        "query": "label_values(llmobs_requests_total, mode)",
+        "refresh": 2,
+        "includeAll": true,
+        "multi": true,
+        "current": { "text": "All", "value": "$__all" }
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "name": "Alerts firing",
+        "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+        "enable": true,
+        "expr": "ALERTS{alertstate=\"firing\"}",
+        "titleFormat": "{{alertname}}",
+        "textFormat": "{{severity}} / {{slo}}",
+        "iconColor": "#e66767",
+        "step": "10s"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "row",
+      "id": 100,
+      "title": "Golden signals",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "collapsed": false
+    },
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "P95 latency",
+      "description": "Wall-clock, as felt by the caller. SLO is 8s; the threshold colour is a status colour, reserved for state and never reused as a series hue.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 1 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max(llmobs:request_latency_seconds:p95{model=~\"$model\", mode=~\"$mode\"})",
+          "instant": false,
+          "legendFormat": "P95"
+        }
+      ],
+      "options": {
+        "graphMode": "area",
+        "colorMode": "value",
+        "textMode": "auto",
+        "justifyMode": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#199e70", "value": null },
+              { "color": "#c98500", "value": 6 },
+              { "color": "#e66767", "value": 8 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Schema validity",
+      "description": "Share of requests that returned a record passing Pydantic validation. SLO floor 98%.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "avg(llmobs:schema_validity:ratio5m{model=~\"$model\", mode=~\"$mode\"})",
+          "legendFormat": "valid"
+        }
+      ],
+      "options": {
+        "graphMode": "area",
+        "colorMode": "value",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 1,
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#e66767", "value": null },
+              { "color": "#c98500", "value": 0.95 },
+              { "color": "#199e70", "value": 0.98 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Fallback rate",
+      "description": "Requests answered with the explicit abstention instead of a record. Not an error rate: the service worked, the model declined.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 1 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "avg(llmobs:fallback_rate:ratio5m{model=~\"$model\", mode=~\"$mode\"})",
+          "legendFormat": "fallback"
+        }
+      ],
+      "options": {
+        "graphMode": "area",
+        "colorMode": "value",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#199e70", "value": null },
+              { "color": "#c98500", "value": 0.05 },
+              { "color": "#e66767", "value": 0.15 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Throughput",
+      "description": "Requests per minute reaching the service.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 1 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(llmobs_requests_total{model=~\"$model\", mode=~\"$mode\"}[1m])) * 60",
+          "legendFormat": "req/min"
+        }
+      ],
+      "options": {
+        "graphMode": "area",
+        "colorMode": "value",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqpm",
+          "decimals": 1,
+          "color": { "mode": "fixed", "fixedColor": "#3987e5" }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "row",
+      "id": 101,
+      "title": "Latency",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 }
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "Latency percentiles",
+      "description": "P50 / P90 / P95 of end-to-end wall-clock latency. Percentiles of one measure, so they take an ordinal ramp of a single hue (light = deeper tail) rather than unrelated categorical hues. No mean is plotted: on a long-tailed distribution the mean describes no request anyone actually made.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 7 },
+      "targets": [
+        { "refId": "A", "expr": "max(llmobs:request_latency_seconds:p50{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "P50" },
+        { "refId": "B", "expr": "max(llmobs:request_latency_seconds:p90{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "P90" },
+        { "refId": "C", "expr": "max(llmobs:request_latency_seconds:p95{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "P95" }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true, "calcs": ["lastNotNull", "max"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 2,
+          "min": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "pointSize": 8,
+            "spanNulls": true,
+            "axisSoftMin": 0
+          },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "transparent", "value": null }] }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "P50" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#256abf" } }] },
+          { "matcher": { "id": "byName", "options": "P90" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#3987e5" } }] },
+          { "matcher": { "id": "byName", "options": "P95" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#86b6ef" } }] }
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "Where the P95 goes: felt vs. admitted",
+      "description": "Three different measures at the same percentile, so three categorical hues. Wall-clock is what the caller waits. Server decode is what Ollama reports, excluding queueing, HTTP, and weight loading. Queue wait is the slot acquisition time. When wall-clock climbs while server decode stays flat, the regression is queueing -- and a dashboard built only on the server's own timings would show nothing wrong.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 7 },
+      "targets": [
+        { "refId": "A", "expr": "max(llmobs:request_latency_seconds:p95{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "wall-clock (felt)" },
+        { "refId": "B", "expr": "max(llmobs:server_eval_seconds:p95{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "server decode (admitted)" },
+        { "refId": "C", "expr": "max(llmobs:queue_wait_seconds:p95{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "queue wait" }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true, "calcs": ["lastNotNull"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 2,
+          "min": 0,
+          "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 0, "showPoints": "never", "spanNulls": true }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "wall-clock (felt)" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#3987e5" } }] },
+          { "matcher": { "id": "byName", "options": "server decode (admitted)" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#d95926" } }] },
+          { "matcher": { "id": "byName", "options": "queue wait" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#199e70" } }] }
+        ]
+      }
+    },
+    {
+      "type": "row",
+      "id": 102,
+      "title": "Reliability",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 16 }
+    },
+    {
+      "id": 20,
+      "type": "timeseries",
+      "title": "Failures by kind",
+      "description": "Project 2's failure taxonomy, carried through to production: truncated points at num_predict, json_parse_error at the enforcement mode, transport_error at Ollama itself. Stacked, because the total matters as much as the split.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 9, "w": 8, "x": 0, "y": 17 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (kind) (rate(llmobs_failures_total{model=~\"$model\", mode=~\"$mode\"}[1m])) * 60",
+          "legendFormat": "{{kind}}"
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true, "calcs": ["lastNotNull"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqpm",
+          "decimals": 2,
+          "min": 0,
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 85,
+            "stacking": { "mode": "normal", "group": "A" },
+            "showPoints": "never",
+            "barAlignment": 0
+          },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "truncated" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#3987e5" } }] },
+          { "matcher": { "id": "byName", "options": "json_parse_error" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#d95926" } }] },
+          { "matcher": { "id": "byName", "options": "schema_validation_error" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#199e70" } }] },
+          { "matcher": { "id": "byName", "options": "empty_response" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#c98500" } }] },
+          { "matcher": { "id": "byName", "options": "transport_error" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#d55181" } }] },
+          { "matcher": { "id": "byName", "options": "thinking_budget_exhausted" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#9085e9" } }] }
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "type": "timeseries",
+      "title": "Retry and repair rates",
+      "description": "Retry rate is how often the first attempt was rejected. Repair rate is how often a response needed client-side JSON extraction despite a format constraint -- Project 2 found this is not zero even in schema mode, and a client that trusts `format` to return bare JSON silently discards those records.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 9, "w": 8, "x": 8, "y": 17 },
+      "targets": [
+        { "refId": "A", "expr": "avg(llmobs:retry_rate:ratio5m{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "retries / request" },
+        { "refId": "B", "expr": "avg(llmobs:repair_rate:ratio5m{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "responses needing repair" }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true, "calcs": ["lastNotNull"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 1,
+          "min": 0,
+          "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 0, "showPoints": "never", "spanNulls": true }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "retries / request" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#3987e5" } }] },
+          { "matcher": { "id": "byName", "options": "responses needing repair" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#d95926" } }] }
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "type": "timeseries",
+      "title": "In-flight requests",
+      "description": "Requests holding or waiting for a model slot. Reads against the queue-wait line above: sustained saturation at max_concurrency is what turns into queue wait, and then into the wall-clock P95. VRAM is deliberately not overlaid here -- it is a different unit, and a second y-axis would make two unrelated shapes look correlated.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 9, "w": 8, "x": 16, "y": 17 },
+      "targets": [
+        { "refId": "A", "expr": "llmobs_inflight_requests", "legendFormat": "in-flight requests" }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true, "calcs": ["lastNotNull", "max"] },
+        "tooltip": { "mode": "single" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 12, "showPoints": "never", "spanNulls": true },
+          "color": { "mode": "fixed", "fixedColor": "#3987e5" }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "row",
+      "id": 103,
+      "title": "Quality (graded canary traffic)",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 }
+    },
+    {
+      "id": 30,
+      "type": "timeseries",
+      "title": "Field accuracy on gold-labelled traffic",
+      "description": "Scored programmatically against Project 2's 52 hand-labelled tasks -- no LLM judge, because a judge's own variance exceeds the quality deltas being measured. Only requests carrying a task_id are graded; organic traffic has no labels and is deliberately not counted.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 27 },
+      "targets": [
+        { "refId": "A", "expr": "avg(llmobs:graded_accuracy:ratio5m{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "field accuracy" }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true, "calcs": ["lastNotNull", "min"] },
+        "tooltip": { "mode": "single" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 1,
+          "min": 0,
+          "max": 1,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true,
+            "thresholdsStyle": { "mode": "dashed" }
+          },
+          "color": { "mode": "fixed", "fixedColor": "#3987e5" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "transparent", "value": null },
+              { "color": "#e66767", "value": 0.75 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 31,
+      "type": "timeseries",
+      "title": "Error direction: omission vs. commission",
+      "description": "Two errors that look identical in an accuracy number and need opposite fixes. Commission invents a value where the gold label is null; omission drops a value that was present. Project 2 measured omission at 5.5-12.3% against commission at 0-4.8% -- the dominant failure is silent data loss, which a hallucination-only metric cannot see.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 27 },
+      "targets": [
+        { "refId": "A", "expr": "avg(llmobs:omission_rate:ratio5m{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "omission (dropped a real value)" },
+        { "refId": "B", "expr": "avg(llmobs:commission_rate:ratio5m{model=~\"$model\", mode=~\"$mode\"})", "legendFormat": "commission (invented a value)" }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true, "calcs": ["lastNotNull", "max"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 1,
+          "min": 0,
+          "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 0, "showPoints": "never", "spanNulls": true }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "omission (dropped a real value)" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#3987e5" } }] },
+          { "matcher": { "id": "byName", "options": "commission (invented a value)" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#d95926" } }] }
+        ]
+      }
+    },
+    {
+      "type": "row",
+      "id": 104,
+      "title": "Cost",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 36 }
+    },
+    {
+      "id": 40,
+      "type": "timeseries",
+      "title": "Cost per 1000 requests: owned GPU vs. hosted API",
+      "description": "Both lines are USD per 1000 requests, so they share one axis honestly. GPU cost is amortised hardware time and therefore rises as throughput falls -- an idle GPU still bills. Hosted cost is tokens x published rate and is flat per request. Where the lines cross is the volume at which self-hosting starts paying for itself.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 37 },
+      "targets": [
+        { "refId": "A", "expr": "llmobs:cost_usd_per_1k_requests:gpu", "legendFormat": "owned GPU (amortised)" },
+        { "refId": "B", "expr": "llmobs:cost_usd_per_1k_requests:hosted", "legendFormat": "hosted API (counterfactual)" }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true, "calcs": ["lastNotNull"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 4,
+          "min": 0,
+          "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 0, "showPoints": "never", "spanNulls": true }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "owned GPU (amortised)" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#3987e5" } }] },
+          { "matcher": { "id": "byName", "options": "hosted API (counterfactual)" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#d95926" } }] }
+        ]
+      }
+    },
+    {
+      "id": 41,
+      "type": "timeseries",
+      "title": "Token throughput",
+      "description": "Prompt and completion tokens per minute. Completion tokens are the expensive half on any hosted API and the slow half on any local one.",
+      "datasource": { "type": "prometheus", "uid": "llmobs-prometheus" },
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 37 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (direction) (rate(llmobs_tokens_total{model=~\"$model\", mode=~\"$mode\"}[1m])) * 60",
+          "legendFormat": "{{direction}}"
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true, "calcs": ["lastNotNull"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 0, "showPoints": "never", "spanNulls": true }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "prompt" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#3987e5" } }] },
+          { "matcher": { "id": "byName", "options": "completion" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "#d95926" } }] }
+        ]
+      }
+    }
+  ]
+}

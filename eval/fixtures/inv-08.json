@@ -1,0 +1,20 @@
+{
+  "task_id": "inv-08",
+  "schema": "invoice",
+  "tags": [
+    "slash_invoice_number"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Southern Cross Mining",
+    "invoice_number": "2026/AU/551",
+    "total_amount": 44120.0,
+    "currency": "AUD",
+    "line_item_count": 9
+  },
+  "latency_s": 1.3517137966118753,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

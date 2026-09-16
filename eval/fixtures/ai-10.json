@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-10",
+  "schema": "action_item",
+  "tags": [
+    "null_trap",
+    "no_owner"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "alerting cleanup",
+    "assignee": null,
+    "due_date": null,
+    "priority": "medium",
+    "blocked": false
+  },
+  "latency_s": 0.9426694037392735,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

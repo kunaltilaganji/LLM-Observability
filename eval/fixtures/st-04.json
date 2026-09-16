@@ -1,0 +1,20 @@
+{
+  "task_id": "st-04",
+  "schema": "support_ticket",
+  "tags": [
+    "regression"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "performance",
+    "severity": "sev2",
+    "sentiment": "frustrated",
+    "requires_escalation": false,
+    "affected_component": null
+  },
+  "latency_s": 1.0902910884469748,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

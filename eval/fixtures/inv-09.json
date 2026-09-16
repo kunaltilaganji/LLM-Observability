@@ -1,0 +1,20 @@
+{
+  "task_id": "inv-09",
+  "schema": "invoice",
+  "tags": [
+    "negative_distractor"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Atlas Freight",
+    "invoice_number": "AF-1009",
+    "total_amount": 6750.0,
+    "currency": "USD",
+    "line_item_count": 4
+  },
+  "latency_s": 1.2501031910069287,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

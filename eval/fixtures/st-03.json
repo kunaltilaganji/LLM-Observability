@@ -1,0 +1,22 @@
+{
+  "task_id": "st-03",
+  "schema": "support_ticket",
+  "tags": [
+    "churn_risk",
+    "null_trap",
+    "angry"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "billing",
+    "severity": "sev2",
+    "sentiment": "angry",
+    "requires_escalation": true,
+    "affected_component": null
+  },
+  "latency_s": 1.0451629450544715,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

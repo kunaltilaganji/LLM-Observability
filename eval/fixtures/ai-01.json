@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-01",
+  "schema": "action_item",
+  "tags": [
+    "explicit_date",
+    "explicit_owner"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "get the staging DB migration script reviewed and merged",
+    "assignee": "Priya",
+    "due_date": null,
+    "priority": "high",
+    "blocked": false
+  },
+  "latency_s": 1.1333117601461709,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

@@ -1,0 +1,22 @@
+{
+  "task_id": "ai-02",
+  "schema": "action_item",
+  "tags": [
+    "null_trap",
+    "no_owner",
+    "urgency"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "rotate the expired TLS certificate on the payments gateway",
+    "assignee": null,
+    "due_date": null,
+    "priority": "urgent",
+    "blocked": false
+  },
+  "latency_s": 1.1090817912481725,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

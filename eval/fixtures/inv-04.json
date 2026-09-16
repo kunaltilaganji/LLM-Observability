@@ -1,0 +1,20 @@
+{
+  "task_id": "inv-04",
+  "schema": "invoice",
+  "tags": [
+    "word_number"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "ACME Corp",
+    "invoice_number": "ACME-77812",
+    "total_amount": 950.0,
+    "currency": "GBP",
+    "line_item_count": 1
+  },
+  "latency_s": 1.2309481208212674,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

@@ -1,0 +1,125 @@
+# Alerting rules.
+#
+# Every rule carries a `for:` clause. Alerting on the instantaneous value of a
+# 1-minute quantile means a single slow request pages someone; the sustain
+# window is what separates a regression from a blip. The windows here are short
+# because this is a demonstration service where an incident is injected and
+# expected to fire within a couple of minutes -- a production deployment would
+# widen them.
+#
+# Thresholds mirror the SLOs in llmobs/settings.py so that the alert and the
+# CI gate in eval/gate.py cannot silently disagree about what "healthy" means.
+
+groups:
+  - name: llmobs_slo
+    rules:
+      - alert: ExtractionLatencyP95Breach
+        expr: llmobs:request_latency_seconds:p95 > 8
+        for: 1m
+        labels:
+          severity: page
+          slo: latency
+        annotations:
+          summary: "P95 latency {{ $value | printf \"%.1f\" }}s exceeds the 8s SLO ({{ $labels.model }}/{{ $labels.mode }})"
+          description: >
+            Compare llmobs:request_latency_seconds:p95 against
+            llmobs:server_eval_seconds:p95. If the server-reported line is flat
+            while wall-clock climbs, the time is being spent queueing or loading
+            weights, not decoding -- check llmobs:queue_wait_seconds:p95 and
+            llmobs_inflight_requests before touching the model config.
+
+      - alert: QueueWaitDominatingLatency
+        expr: llmobs:queue_wait_seconds:p95 > 2
+        for: 1m
+        labels:
+          severity: warn
+          slo: latency
+        annotations:
+          summary: "Requests waiting {{ $value | printf \"%.1f\" }}s for a model slot"
+          description: >
+            Arrival rate exceeds what one GPU can serve. Raising num_predict or
+            switching model will make this worse, not better; the levers are
+            concurrency, admission control, or hardware.
+
+      - alert: SchemaValidityBelowSLO
+        expr: llmobs:schema_validity:ratio5m < 0.98
+        for: 2m
+        labels:
+          severity: page
+          slo: reliability
+        annotations:
+          summary: "Only {{ $value | humanizePercentage }} of requests produced a valid record"
+          description: >
+            Check llmobs_failures_total by kind. `truncated` points at
+            num_predict; `json_parse_error` at the enforcement mode;
+            `transport_error` at Ollama itself.
+
+      - alert: GradedAccuracyRegression
+        expr: llmobs:graded_accuracy:ratio5m < 0.75
+        for: 2m
+        labels:
+          severity: page
+          slo: quality
+        annotations:
+          summary: "Canary field accuracy {{ $value | humanizePercentage }} is below the 75% floor"
+          description: >
+            Graded canary traffic regressed. Because this only covers requests
+            carrying gold labels, a firing here means the *model or config*
+            changed -- the inputs are fixed. Check for a model tag, quantization,
+            or format-mode change since the last deploy.
+
+      # Split by direction deliberately: a rise in omissions and a rise in
+      # commissions look identical in the accuracy number and demand opposite
+      # prompt fixes.
+      - alert: OmissionRateSpike
+        expr: llmobs:omission_rate:ratio5m > 0.15
+        for: 2m
+        labels:
+          severity: warn
+          slo: quality
+        annotations:
+          summary: "{{ $value | humanizePercentage }} of graded fields dropped a value that was present"
+          description: >
+            The model is returning null for values that exist in the source
+            text. This is silent data loss and a hallucination-only metric
+            cannot see it.
+
+      - alert: CommissionRateSpike
+        expr: llmobs:commission_rate:ratio5m > 0.05
+        for: 2m
+        labels:
+          severity: warn
+          slo: quality
+        annotations:
+          summary: "{{ $value | humanizePercentage }} of graded fields invented a value"
+
+      - alert: FallbackRateElevated
+        expr: llmobs:fallback_rate:ratio5m > 0.05
+        for: 2m
+        labels:
+          severity: warn
+          slo: reliability
+        annotations:
+          summary: "{{ $value | humanizePercentage }} of requests degraded to the abstention response"
+
+      # Fires when a "constrained" decode still needed client-side repair. Not
+      # an outage -- a correctness trap: a client that trusts `format` to
+      # return bare JSON discards these records entirely.
+      - alert: ConstrainedOutputNeedingRepair
+        expr: llmobs:repair_rate:ratio5m > 0.02 and on() (llmobs:repair_rate:ratio5m > 0)
+        for: 5m
+        labels:
+          severity: info
+          slo: reliability
+        annotations:
+          summary: "{{ $value | humanizePercentage }} of responses needed JSON extraction despite a format constraint"
+
+  - name: llmobs_availability
+    rules:
+      - alert: ServiceDown
+        expr: up{job="llm-extraction-service"} == 0
+        for: 30s
+        labels:
+          severity: page
+        annotations:
+          summary: "Extraction service is not being scraped"

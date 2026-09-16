@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-07",
+  "schema": "action_item",
+  "tags": [
+    "relative_date",
+    "blocked"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "customer escalation review is due tomorrow",
+    "assignee": "Ana",
+    "due_date": null,
+    "priority": "urgent",
+    "blocked": true
+  },
+  "latency_s": 1.1038210950791836,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

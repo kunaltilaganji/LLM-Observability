@@ -1,0 +1,21 @@
+{
+  "task_id": "st-09",
+  "schema": "support_ticket",
+  "tags": [
+    "angry",
+    "repeat_contact"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "performance",
+    "severity": "sev1",
+    "sentiment": "angry",
+    "requires_escalation": true,
+    "affected_component": null
+  },
+  "latency_s": 1.1315855621360242,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

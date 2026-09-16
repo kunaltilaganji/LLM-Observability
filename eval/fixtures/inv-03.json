@@ -1,0 +1,21 @@
+{
+  "task_id": "inv-03",
+  "schema": "invoice",
+  "tags": [
+    "lakh_grouping",
+    "currency_inference"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Sundar Textiles Pvt Ltd",
+    "invoice_number": "TI/2026/00231",
+    "total_amount": 145600.0,
+    "currency": "INR",
+    "line_item_count": 12
+  },
+  "latency_s": 1.3885117010213435,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

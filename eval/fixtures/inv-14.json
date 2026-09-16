@@ -1,0 +1,21 @@
+{
+  "task_id": "inv-14",
+  "schema": "invoice",
+  "tags": [
+    "zero_amount",
+    "edge_case"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Volta Analytics",
+    "invoice_number": "VA-2026-1188",
+    "total_amount": 0.0,
+    "currency": "USD",
+    "line_item_count": 8
+  },
+  "latency_s": 1.284521752037108,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

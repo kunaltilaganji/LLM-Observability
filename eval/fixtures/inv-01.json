@@ -1,0 +1,20 @@
+{
+  "task_id": "inv-01",
+  "schema": "invoice",
+  "tags": [
+    "comma_separator"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Northwind Logistics",
+    "invoice_number": "INV-2026-0417",
+    "total_amount": 12480.55,
+    "currency": "USD",
+    "line_item_count": 3
+  },
+  "latency_s": 1.4167828341014683,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

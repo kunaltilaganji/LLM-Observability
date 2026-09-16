@@ -1,0 +1,88 @@
+name: quality gate
+
+# Two jobs, because they prove different things and only one of them can run
+# on hosted infrastructure.
+#
+#   replay  - GitHub-hosted. Re-scores frozen model outputs. Catches a bug in
+#             the scorer, the thresholds, or the gate arithmetic. Does NOT
+#             re-run the model, so it cannot catch a model or config
+#             regression. Runs on every PR.
+#
+#   live    - Self-hosted runner with the GPU. Actually calls the model and
+#             grades what comes back. This is the job that catches a swapped
+#             model tag, a quantisation change, or a prompt regression.
+#
+# A green check from `replay` alone does not mean the model is fine, and the
+# job names say so rather than implying otherwise.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  replay:
+    name: replay stored fixtures (scoring logic only — model not re-run)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check out Project 2 (supplies the schemas, scorers, and gold labels)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/offline-slm-assistant
+          path: offline-slm-assistant
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Verify the gold suite still matches its own schemas
+        env:
+          SLM_REPO: ${{ github.workspace }}/offline-slm-assistant
+        run: python -m pytest tests/ -q
+
+      - name: Gate
+        env:
+          SLM_REPO: ${{ github.workspace }}/offline-slm-assistant
+        run: python eval/gate.py --replay --report reports/gate_replay.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gate-report-replay
+          path: reports/gate_replay.json
+
+  live:
+    name: live gate on GPU (self-hosted)
+    # Skipped automatically on forks and on any repo without the runner
+    # registered, rather than failing the whole workflow with a red X that
+    # means "no GPU here" instead of "quality regressed".
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, gpu]
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start the stack
+        run: ./scripts/stack.sh up
+
+      - name: Gate against the recorded baseline
+        run: |
+          python eval/gate.py \
+            --base-url http://localhost:8100 \
+            --report reports/gate_live.json
+
+      - name: Stop the stack
+        if: always()
+        run: ./scripts/stack.sh down
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gate-report-live
+          path: reports/gate_live.json

@@ -1,0 +1,20 @@
+{
+  "task_id": "inv-07",
+  "schema": "invoice",
+  "tags": [
+    "large_number"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Meridian Cloud Services",
+    "invoice_number": "MCS-2026-Q1-889",
+    "total_amount": 87204.13,
+    "currency": "USD",
+    "line_item_count": 24
+  },
+  "latency_s": 1.3471763585694134,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

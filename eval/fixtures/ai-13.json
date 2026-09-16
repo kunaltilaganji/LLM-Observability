@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-13",
+  "schema": "action_item",
+  "tags": [
+    "null_trap",
+    "no_owner"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "Archive the deprecated v1 endpoints",
+    "assignee": null,
+    "due_date": null,
+    "priority": "low",
+    "blocked": false
+  },
+  "latency_s": 0.9924413789995015,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

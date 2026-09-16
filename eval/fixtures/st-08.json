@@ -1,0 +1,21 @@
+{
+  "task_id": "st-08",
+  "schema": "support_ticket",
+  "tags": [
+    "partial_impact",
+    "null_trap"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "billing",
+    "severity": "sev3",
+    "sentiment": "frustrated",
+    "requires_escalation": false,
+    "affected_component": null
+  },
+  "latency_s": 1.0574988862499595,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

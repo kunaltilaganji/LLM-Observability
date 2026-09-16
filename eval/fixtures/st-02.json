@@ -1,0 +1,22 @@
+{
+  "task_id": "st-02",
+  "schema": "support_ticket",
+  "tags": [
+    "cosmetic",
+    "null_trap",
+    "positive_sentiment"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "billing",
+    "severity": "sev4",
+    "sentiment": "neutral",
+    "requires_escalation": false,
+    "affected_component": null
+  },
+  "latency_s": 1.1926813633181155,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

@@ -1,0 +1,28 @@
+# Prometheus scrape config for the extraction service.
+#
+# 5s scrape interval rather than the usual 15s: the incident case study injects
+# a regression and watches it surface, and a 15s interval turns a 60-second
+# event into four data points. This is a single-target local deployment, so the
+# cost of the faster interval is nothing.
+
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+  external_labels:
+    deployment: aicoe-a6000
+    gpu: rtx-a6000
+
+rule_files:
+  - rules/alerts.yml
+  - rules/recording.yml
+
+scrape_configs:
+  - job_name: llm-extraction-service
+    static_configs:
+      - targets: ["localhost:8100"]
+        labels:
+          service: llm-extraction-service
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

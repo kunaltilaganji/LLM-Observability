@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-11",
+  "schema": "action_item",
+  "tags": [
+    "blocked",
+    "date_format_variant"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "blocked on the vendor API key for the Stripe migration",
+    "assignee": null,
+    "due_date": null,
+    "priority": "urgent",
+    "blocked": true
+  },
+  "latency_s": 1.0507311089895666,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

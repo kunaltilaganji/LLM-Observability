@@ -1,0 +1,20 @@
+{
+  "task_id": "inv-06",
+  "schema": "invoice",
+  "tags": [
+    "currency_prefix"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Cascade Bioscience",
+    "invoice_number": "CB-0042",
+    "total_amount": 3199.99,
+    "currency": "CAD",
+    "line_item_count": 2
+  },
+  "latency_s": 1.2392180291935802,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

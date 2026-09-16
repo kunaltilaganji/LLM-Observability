@@ -1,0 +1,21 @@
+{
+  "task_id": "ai-19",
+  "schema": "action_item",
+  "tags": [
+    "null_trap",
+    "no_owner"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "title": "look at why the nightly ETL takes 6 hours now",
+    "assignee": null,
+    "due_date": null,
+    "priority": "urgent",
+    "blocked": false
+  },
+  "latency_s": 1.0313906520605087,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

@@ -1,0 +1,20 @@
+{
+  "task_id": "inv-13",
+  "schema": "invoice",
+  "tags": [
+    "no_decimals"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "vendor": "Marina Bay Consulting Pte Ltd",
+    "invoice_number": "SG-2026-0009",
+    "total_amount": 12000.0,
+    "currency": "SGD",
+    "line_item_count": 1
+  },
+  "latency_s": 1.3559546498581767,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}

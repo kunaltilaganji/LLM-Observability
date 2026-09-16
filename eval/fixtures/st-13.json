@@ -1,0 +1,21 @@
+{
+  "task_id": "st-13",
+  "schema": "support_ticket",
+  "tags": [
+    "sev1",
+    "revenue_impact"
+  ],
+  "ok": true,
+  "failure": "none",
+  "record": {
+    "category": "performance",
+    "severity": "sev2",
+    "sentiment": "frustrated",
+    "requires_escalation": true,
+    "affected_component": null
+  },
+  "latency_s": 1.0394190750084817,
+  "attempts": 1,
+  "model": "gemma3:4b",
+  "mode": "schema"
+}
